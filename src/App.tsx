@@ -1,35 +1,43 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import './App.css';
+import React, {useState} from 'react';
+import CardView from "./CardView";
+import CardDeck from './lib/CardDeck';
+import Card from './lib/Card';
+import PokerHand from './lib/PokerHand';
+import './cards.css';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App: React.FC = () => {
+    const [cards, setCards] = useState<Card[]>([]);
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    const pokerHand = new PokerHand(cards);
+    let pokerHandText: string = pokerHand.getOutcome();
 
-export default App
+    const getCards = () => {
+        const cardDeck = new CardDeck();
+        const newCards = cardDeck.getCards(5);
+        setCards(newCards);
+    };
+
+    if (cards.length === 0) {
+        return (
+            <div>
+                <button className="start-btn" onClick={getCards}>Dealing cards</button>
+                <p className="title-state">No Cards</p>
+            </div>
+        );
+    }
+
+    return (
+        <div className="App">
+            <div className="cards">
+                {cards.map((card) => (
+                    <CardView key={card.rank + card.suit} rank={card.rank} suit={card.suit}/>
+                ))}
+            </div>
+            <button className="start-btn" onClick={getCards}>Dealing cards</button>
+            <p><strong>{pokerHandText}</strong></p>
+        </div>
+    );
+};
+
+export default App;
